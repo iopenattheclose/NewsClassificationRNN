@@ -38,8 +38,14 @@ def data_cleaning(text):
 
     return cleaned
 
+def set_max_seq_length():
+    max_sentence_len = df['title'].str.split(" ").str.len().max()
+    total_classes = df.category.nunique()
+    print(f"Maximum sequence length: {max_sentence_len}")
+    print(f"Total classes: {total_classes}")
 
 if __name__ == "__main__":
     df = ingestData()
     for index, data in tqdm(df.iterrows(), total=df.shape[0]):
         df.loc[index, 'title'] = data_cleaning(data['title'])
+    set_max_seq_length()
