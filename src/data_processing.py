@@ -45,6 +45,7 @@ def set_max_seq_length():
     total_classes = df.category.nunique()
     print(f"Maximum sequence length: {max_sentence_len}")
     print(f"Total classes: {total_classes}")
+    return max_sentence_len,total_classes
 
 def cleaned_data():
     tqdm.pandas()
@@ -64,13 +65,15 @@ def splitData():
     train_Y = train_Y.reset_index(drop=True)
     test_Y = test_Y.reset_index(drop=True)
     print(train_X.shape, train_Y.shape, test_X.shape, test_Y.shape)
-    return train_X,test_X,train_Y,test_Y
+    train_Y,test_Y = encodeLabels(train_Y,test_Y)
+    validation = test_Y.argmax(axis=1)
+    return train_X,test_X,train_Y,test_Y,validation
 
-def encodeLabels():
+def encodeLabels(train_Y,test_Y):
     train_Y = pd.get_dummies(train_Y).values
     test_Y = pd.get_dummies(test_Y).values
+    return train_Y,test_Y
 
 
 if __name__ == "__main__":
     df = ingestData()
-    set_max_seq_length()
