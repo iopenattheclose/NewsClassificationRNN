@@ -42,7 +42,7 @@ def data_cleaning(text):
 
     return cleaned
 
-def set_max_seq_length():
+def get_max_seq_length():
     max_sentence_len = df['title'].str.split(" ").str.len().max()
     total_classes = df.category.nunique()
     print(f"Maximum sequence length: {max_sentence_len}")
@@ -88,13 +88,15 @@ def tokenize_and_pad(inp_text, max_len, tok):
     return text_seq
 
 
-text_tok = Tokenizer()
-text_tok.fit_on_texts(train_X)
-train_text_X = tokenize_and_pad(inp_text=train_X, max_len=max_sentence_len, tok=text_tok)
-test_text_X = tokenize_and_pad(inp_text=test_X, max_len=max_sentence_len, tok=text_tok)
-vocab_size = len(text_tok.word_index)+1
-
-print("Overall text vocab size", vocab_size)
+def getTokenisedData():
+    max_sentence_len,_ = get_max_seq_length()
+    train_X,test_X,_,_ = splitData()
+    text_tok = Tokenizer()
+    text_tok.fit_on_texts(train_X)
+    train_text_X = tokenize_and_pad(inp_text=train_X, max_len=max_sentence_len, tok=text_tok)
+    test_text_X = tokenize_and_pad(inp_text=test_X, max_len=max_sentence_len, tok=text_tok)
+    vocab_size = len(text_tok.word_index)+1
+    print("Overall text vocab size", vocab_size)
 
 if __name__ == "__main__":
     df = ingestData()
