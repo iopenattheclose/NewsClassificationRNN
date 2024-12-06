@@ -8,6 +8,8 @@ import re
 import matplotlib.pyplot as plt
 import string
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 import nltk
@@ -74,6 +76,25 @@ def encodeLabels(train_Y,test_Y):
     test_Y = pd.get_dummies(test_Y).values
     return train_Y,test_Y
 
+def tokenize_and_pad(inp_text, max_len, tok):
+    #since the numer of words in a document vary, padding is required 
+    #padding basically returns zero vectors 
+
+    #tok is Tokeniser() object=>breaks sentence into word and assigns unique integers to each word
+    #these unique integers will be the indices of the embedding vector
+    text_seq = tok.texts_to_sequences(inp_text)
+    text_seq = pad_sequences(text_seq, maxlen=max_len, padding='post')
+
+    return text_seq
+
+
+text_tok = Tokenizer()
+text_tok.fit_on_texts(train_X)
+train_text_X = tokenize_and_pad(inp_text=train_X, max_len=max_sentence_len, tok=text_tok)
+test_text_X = tokenize_and_pad(inp_text=test_X, max_len=max_sentence_len, tok=text_tok)
+vocab_size = len(text_tok.word_index)+1
+
+print("Overall text vocab size", vocab_size)
 
 if __name__ == "__main__":
     df = ingestData()
