@@ -31,7 +31,7 @@ def data_cleaning(text):
 
     return cleaned
 
-def get_max_seq_length():
+def get_max_seq_length(df):
     max_sentence_len = df['title'].str.split(" ").str.len().max()
     total_classes = df.category.nunique()
     print(f"Maximum sequence length: {max_sentence_len}")
@@ -65,26 +65,30 @@ def encodeLabels(train_Y,test_Y):
     test_Y = pd.get_dummies(test_Y).values
     return train_Y,test_Y
 
-def tokenize_and_pad(inp_text, max_len, tok):
-    #since the numer of words in a document vary, padding is required 
-    #padding basically returns zero vectors 
-
-    #tok is Tokeniser() object=>breaks sentence into word and assigns unique integers to each word
-    #these unique integers will be the indices of the embedding vector
-    text_seq = tok.texts_to_sequences(inp_text)
-    text_seq = pad_sequences(text_seq, maxlen=max_len, padding='post')
-
 def getTokenisedData():
-    max_sentence_len,_ = get_max_seq_length()
-    train_X,test_X,_,_ = splitData()
-    text_tok = Tokenizer()
-    text_tok.fit_on_texts(train_X)
-    #test_tok is used for train and test to prevent data leakage
-    train_text_X = tokenize_and_pad(inp_text=train_X, max_len=max_sentence_len, tok=text_tok)
-    test_text_X = tokenize_and_pad(inp_text=test_X, max_len=max_sentence_len, tok=text_tok)
-    #adding 1 to vocab size as first vector of EM will be padding vector (all zeros)
-    vocab_size = len(text_tok.word_index)+1
-    print("Overall text vocab size", vocab_size)
+    df = ingestData()
+    df = get_cleaned_data(df)
+    max_sentence_len, total_classes = get_max_seq_length(df)
+    train_X, test_X, _, _, _ = splitData(df)
+
+    # Create and adapt the TextVectorization layer
+    text_vectorizer = tf.keras.layers.TextVectorization(
+        max_tokens=None,                     # No limit on vocabulary size
+        output_mode='int',                   # Return integer indices
+        output_sequence_length=int(max_sentence_len)  # Pad/truncate sequences to max_sentence_len
+    )
+    
+    # Adapt the TextVectorization layer on the training data
+    text_vectorizer.adapt(train_X)
+
+    # Apply the vectorization to train and test data
+    train_text_X = text_vectorizer(train_X)
+    test_text_X = text_vectorizer(train_X)
+
+    # Get the vocabulary size
+    vocab_size = len(text_vectorizer.get_vocabulary())  # No need to add 1 manually
+
+    print("Overall text vocab size:", vocab_size)
     return vocab_size
 
 if __name__ == "__main__":
