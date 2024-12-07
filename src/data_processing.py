@@ -1,15 +1,4 @@
-import pandas as pd
-import numpy as np
-from IPython.display import Image
-from tqdm import tqdm
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, accuracy_score
-import re
-import matplotlib.pyplot as plt
-import string
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from library import *
 
 
 import nltk
@@ -49,14 +38,14 @@ def get_max_seq_length():
     print(f"Total classes: {total_classes}")
     return max_sentence_len,total_classes
 
-def cleaned_data():
+def get_cleaned_data(df):
     tqdm.pandas()
     # Apply the data_cleaning function to the 'title' column
     df['title'] = df['title'].progress_apply(data_cleaning)
     print(df.head())
     return df
 
-def splitData():
+def splitData(df):
     np.random.seed(100)
     train_X, test_X, train_Y, test_Y = train_test_split(df['title'],
                                                         df['category'],
@@ -93,8 +82,13 @@ def getTokenisedData():
     #test_tok is used for train and test to prevent data leakage
     train_text_X = tokenize_and_pad(inp_text=train_X, max_len=max_sentence_len, tok=text_tok)
     test_text_X = tokenize_and_pad(inp_text=test_X, max_len=max_sentence_len, tok=text_tok)
+    #adding 1 to vocab size as first vector of EM will be padding vector (all zeros)
     vocab_size = len(text_tok.word_index)+1
     print("Overall text vocab size", vocab_size)
+    return vocab_size
 
 if __name__ == "__main__":
     df = ingestData()
+    df = get_cleaned_data(df)
+    train_X,test_X,train_Y,test_Y,validation = splitData(df)
+    print(train_X[:5],test_X[:5],train_Y[:5])
