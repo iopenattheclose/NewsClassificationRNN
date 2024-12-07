@@ -89,7 +89,7 @@ def getTokenisedData():
     vocab_size = len(text_vectorizer.get_vocabulary())  # No need to add 1 manually
 
     print("Overall text vocab size:", vocab_size)
-    return vocab_size
+    return vocab_size,train_text_X,test_text_X
 
 if __name__ == "__main__":
     df = ingestData()
