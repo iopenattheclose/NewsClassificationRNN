@@ -9,11 +9,17 @@ import matplotlib.pyplot as plt
 import string
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-# from tensorflow.python.keras.preprocessing.text import Tokenizer
-# from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.layers import Dense, Embedding, Input, InputLayer, RNN, SimpleRNN
-from tensorflow.python.keras.models import Model, Sequential
-from tensorflow.python.keras.callbacks import EarlyStopping
+from keras.api.layers import Dense, Embedding, Input, InputLayer, RNN, SimpleRNN
+from keras.api.models import Model, Sequential
+from keras.api.callbacks import EarlyStopping
+
+# from tensorflow.python.keras.layers import Dense, Embedding, Input, InputLayer, RNN, SimpleRNN
+# from tensorflow.python.keras.models import Model, Sequential
+# from tensorflow.python.keras.callbacks import EarlyStopping
+
+
+
+
 
 
 

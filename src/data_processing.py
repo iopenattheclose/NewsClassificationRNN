@@ -69,7 +69,7 @@ def getTokenisedData():
     df = ingestData()
     df = get_cleaned_data(df)
     max_sentence_len, total_classes = get_max_seq_length(df)
-    train_X, test_X, _, _, _ = splitData(df)
+    train_X, test_X, train_Y, test_Y, _ = splitData(df)
 
     # Create and adapt the TextVectorization layer
     text_vectorizer = tf.keras.layers.TextVectorization(
@@ -83,13 +83,13 @@ def getTokenisedData():
 
     # Apply the vectorization to train and test data
     train_text_X = text_vectorizer(train_X)
-    test_text_X = text_vectorizer(train_X)
+    test_text_X = text_vectorizer(test_X)
 
     # Get the vocabulary size
     vocab_size = len(text_vectorizer.get_vocabulary())  # No need to add 1 manually
 
     print("Overall text vocab size:", vocab_size)
-    return vocab_size,train_text_X,test_text_X
+    return vocab_size,train_text_X,test_text_X,train_Y, test_Y
 
 if __name__ == "__main__":
     df = ingestData()
