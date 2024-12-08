@@ -11,7 +11,7 @@ stop_words = stopwords.words('english')
 
 
 def ingestData():
-    df = pd.read_csv("/Users/prupro/Desktop/Github/NewsClassRNN/artifacts/bbc-news-data.csv", sep="\t")
+    df = pd.read_csv("artifacts/bbc-news-data.csv", sep="\t")
     df = df[((~df.title.isnull()) & (~df.content.isnull()))].reset_index(drop=True)
     print(f'Data shape and size is : {df.shape} and {df.shape[0]}')
     return df
@@ -101,4 +101,3 @@ if __name__ == "__main__":
     df = ingestData()
     df = get_cleaned_data(df)
     train_X,test_X,train_Y,test_Y,validation = splitData(df)
-    print(train_X[:5],test_X[:5],train_Y[:5])
