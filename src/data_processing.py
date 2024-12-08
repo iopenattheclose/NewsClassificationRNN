@@ -3,6 +3,8 @@ from library import *
 
 import nltk
 nltk.download('stopwords')
+from utils import *
+
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
@@ -58,6 +60,8 @@ def splitData(df):
     print(train_X.shape, train_Y.shape, test_X.shape, test_Y.shape)
     train_Y,test_Y = encodeLabels(train_Y,test_Y)
     validation = test_Y.argmax(axis=1)
+    test_X.to_csv(os.path.join("artifacts","test_X.csv"),index=False,header=True)
+    save_object(file_path=os.path.join("artifacts","validation.pkl"),obj = validation )
     return train_X,test_X,train_Y,test_Y,validation
 
 def encodeLabels(train_Y,test_Y):
@@ -84,6 +88,8 @@ def getTokenisedData():
     # Apply the vectorization to train and test data
     train_text_X = text_vectorizer(train_X)
     test_text_X = text_vectorizer(test_X)
+
+    save_object(file_path=os.path.join("artifacts","test_text_X.pkl"),obj = test_text_X )
 
     # Get the vocabulary size
     vocab_size = len(text_vectorizer.get_vocabulary())  # No need to add 1 manually

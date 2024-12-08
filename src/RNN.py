@@ -29,16 +29,20 @@ def model_training():
     optimizer = tf.keras.optimizers.Adam(clipnorm=1.0)  # Clip gradients by norm
     model_clipping.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=2, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_acc', patience=5, restore_best_weights=True)
     
     model_clipping.fit(
             x=train_text_X,
             y=train_Y,
             validation_data=(test_text_X, test_Y),
-            batch_size=32,
+            batch_size=64,
             epochs=20,  # Set a higher max epoch count, early stopping will halt it if needed
             callbacks=[early_stopping]
         )
+    
+    return model_clipping
+    
+
     
 def get_data_for_model_input():
     df = ingestData()
@@ -49,4 +53,5 @@ def get_data_for_model_input():
 
 
 if __name__ == "__main__":
-    model_training()
+    trained_model = model_training()
+    save_object(file_path=os.path.join("artifacts","model.pkl"),obj = trained_model)
